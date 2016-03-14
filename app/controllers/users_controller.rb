@@ -10,6 +10,7 @@ class UsersController < ApplicationController
       else
         @user.remember_token
         @user.user_state_id = 2
+        @user.save
         render json: @user
       end
     else
