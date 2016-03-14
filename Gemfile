@@ -7,6 +7,7 @@ gem 'rails', github: "rails/rails"
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.18'
 
+gem 'geokit-rails'
 # Use Puma as the app server
 gem 'puma'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder

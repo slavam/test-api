@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  from_location: one
+  to_location: one
+  order_state: one
+  cost: 9.99
+  comment: MyString
+  score: 1
+
+two:
+  user: two
+  from_location: two
+  to_location: two
+  order_state: two
+  cost: 9.99
+  comment: MyString
+  score: 1

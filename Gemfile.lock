@@ -71,6 +71,10 @@ GEM
     concurrent-ruby (1.0.0)
     erubis (2.7.0)
     ffi (1.9.10)
+    geokit (1.10.0)
+    geokit-rails (2.1.0)
+      geokit (~> 1.5)
+      rails (>= 3.0)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     i18n (0.7.0)
@@ -132,6 +136,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers (~> 0.10.0.rc1)
   byebug
+  geokit-rails
   listen (~> 3.0.5)
   pg (~> 0.18)
   puma

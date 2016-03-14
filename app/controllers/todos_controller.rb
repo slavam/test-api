@@ -16,7 +16,7 @@ class TodosController < ApplicationController
   # POST /todos
   def create
     @todo = Todo.new(todo_params)
-
+    
     if @todo.save
       render json: @todo, status: :created, location: @todo
     else
@@ -40,12 +40,15 @@ class TodosController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
+    
     def set_todo
       @todo = Todo.find(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.
     def todo_params
+      # params.permit(:todo)
       params.require(:todo).permit(:title, :completed, :order)
+      # params.fetch(:todo, {}).permit(:title, :completed, :order)
     end
 end
