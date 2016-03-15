@@ -26,12 +26,10 @@ class UsersController < ApplicationController
 
   # GET /users/1
   def show
-    if @user.code_token != request.env['HTTP_API_TOKEN']  #request.headers[:api_token]
+    if (@user.code_token != request.env['HTTP_API_TOKEN']) || (@user.user_state_id == 1)  
       render json: @user.errors, status: :unprocessable_entity
-      # p request.headers
-      # render json: params
     else
-      render json: @user
+      render json: @user, status: 200 
     end
   end
 
