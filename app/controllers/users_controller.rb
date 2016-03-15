@@ -1,10 +1,11 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :destroy]
+  before_action :set_user, only: [:show, :update, :destroy]
   before_action :user_by_phone, only: :login
+  before_action :check_user, only: [:show, :update]
 
   # PUT
   def login
-    if @user.user_state_id == 1
+    if !@user.confirmated?
       if @user.code_token != params[:sms_code]
         render json: @user.errors, status: :unprocessable_entity
       else
@@ -26,7 +27,7 @@ class UsersController < ApplicationController
 
   # GET /users/1
   def show
-    if (@user.code_token != request.env['HTTP_API_TOKEN']) || (@user.user_state_id == 1)  
+    if !@user.confirmated?
       render json: @user.errors, status: :unprocessable_entity
     else
       render json: @user, status: 200 
@@ -49,24 +50,15 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1
   def update
-    # if @user.user_state_id == 1
-    #   if @user.code_token != params[:sms_code]
-    #     status = "Wrong sms code"
-    #   end
-    #   @user.remember_token
-    #   @user.user_state_id = 2
-
-    #   @user.save #update(user_params)
-      
-    # end
-    # render json: @user
-    
-    
-    # if @user.update(user_params)
-    #   render json: @user
-    # else
-    #   render json: @user.errors, status: :unprocessable_entity
-    # end
+    if !@user.confirmated?
+      render json: @user.errors, status: :unprocessable_entity
+    else
+      if @user.update(user_params)
+        render json: @user
+      else
+        render json: @user.errors, status: :unprocessable_entity
+      end
+    end
   end
 
   # DELETE /users/1
@@ -88,5 +80,10 @@ class UsersController < ApplicationController
     def user_params
       # params.require(:user).permit(:phone, :user_state_id, :first_name, :last_name, :date_of_birth, :picture, :city, :have_car, :code_token)
       params.require(:user).permit(:phone, :first_name, :last_name, :date_of_birth, :picture, :city, :have_car, :code_token)
+    end
+    
+    def check_user
+      token = request.env['HTTP_API_TOKEN']? request.env['HTTP_API_TOKEN'] : params[:api_token]
+      @user.authenticate(token)
     end
 end

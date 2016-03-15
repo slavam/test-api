@@ -14,4 +14,12 @@ class User < ApplicationRecord
     # self.code_token = User.new_token
     update_attribute(:code_token, User.new_token)
   end
+  
+  def authenticate(token)
+    (self.code_token == token)
+  end
+  
+  def confirmated?
+    self.user_state_id > 1 
+  end
 end

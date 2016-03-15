@@ -1,10 +1,11 @@
 class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :update, :destroy]
-  before_action :require_user, only: :create
+  before_action :require_user, only: [:create, :show, :index]
+  # before_action :check_user, only: [:create, :show, :index]
 
   # GET /orders
   def index
-    @orders = Order.all
+    @orders = @user.orders.all.order(:id)
 
     render json: @orders
   end
@@ -16,8 +17,8 @@ class OrdersController < ApplicationController
 
   # POST /orders
   def create
-    unless @user
-      render json: @todo.errors, status: :unprocessable_entity 
+    unless @user.confirmated?
+      render json: @user.errors, status: :unprocessable_entity 
     end
     @order = @user.orders.build(order_params)
     @order.order_state_id = 1 # new order
@@ -52,7 +53,15 @@ class OrdersController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def require_user
-      @user = User.find_by(code_token: params[:api_token])
+      # @user = User.find_by(code_token: params[:api_token])
+      if @order
+        user_id = @order.user_id
+      else
+        user_id = params[:user_id]? params[:user_id] : params[:order][:user_id]
+      end
+      @user = User.find(user_id)
+      token = request.env['HTTP_API_TOKEN']? request.env['HTTP_API_TOKEN'] : params[:api_token]
+      @user.authenticate(token)
     end
     
     def set_order
@@ -64,4 +73,9 @@ class OrdersController < ApplicationController
       # params.require(:order).permit(:user_id, :from_location_id, :to_location_id, :order_state_id, :cost, :comment, :author, :score)
       params.require(:order).permit(:cost, :comment, :author, :score)
     end
+    
+    # def check_user
+    #   token = request.env['HTTP_API_TOKEN']? request.env['HTTP_API_TOKEN'] : params[:api_token]
+    #   @user.authenticate(token)
+    # end
 end
