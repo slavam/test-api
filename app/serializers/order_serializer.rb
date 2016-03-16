@@ -4,4 +4,5 @@ class OrderSerializer < ActiveModel::Serializer
   has_one :from_location
   has_one :to_location
   has_one :order_state
+  has_many :options
 end

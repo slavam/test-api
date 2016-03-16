@@ -29,6 +29,13 @@ class OrdersController < ApplicationController
     @order.from_location_id = loc_from.id
     @order.to_location_id = loc_to.id
     
+    opts = params[:options] # [1, 4]
+    if opts
+      opts.tr('[] ','').split(',').each do |e|
+        @order.options << Option.find(e.to_i)
+      end
+    end
+    
     if @order.save
       render json: @order, status: :created, location: @order
     else
