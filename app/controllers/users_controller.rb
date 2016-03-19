@@ -1,10 +1,10 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :update, :destroy]
-  before_action :user_by_phone, only: :login
+  before_action :user_by_phone, only: :confirm
   before_action :check_user, only: [:show, :update]
 
   # PUT
-  def login
+  def confirm
     if !@user.confirmated?
       if @user.code_token != params[:sms_code]
         render json: @user.errors, status: :unprocessable_entity
@@ -12,10 +12,10 @@ class UsersController < ApplicationController
         @user.remember_token
         @user.user_state_id = 2
         @user.save
-        render json: @user
+        render json: @user, status: 200 
       end
     else
-      # render json: @user
+      render json: {message: "Alredy registered"}
     end
   end
   
@@ -84,6 +84,8 @@ class UsersController < ApplicationController
     
     def check_user
       token = request.env['HTTP_API_TOKEN']? request.env['HTTP_API_TOKEN'] : params[:api_token]
-      @user.authenticate(token)
+      unless @user.authenticate(token)
+        render json: {message: "Authentication problem"}, status: :unprocessable_entity
+      end
     end
 end

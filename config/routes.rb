@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   resources :orders
   resources :order_states
   resources :cars
-  put 'login', to: 'users#login'
+  put 'confirm', to: 'users#confirm'
   resources :users
   resources :locations
   resources :options

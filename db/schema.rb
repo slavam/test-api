@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160314084709) do
+ActiveRecord::Schema.define(version: 20160318082456) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,8 +38,12 @@ ActiveRecord::Schema.define(version: 20160314084709) do
     t.string   "plate"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
+    t.integer  "make_model_id"
+    t.float    "lat"
+    t.float    "lng"
   end
 
+  add_index "cars", ["make_model_id"], name: "index_cars_on_make_model_id", using: :btree
   add_index "cars", ["user_id"], name: "index_cars_on_user_id", using: :btree
 
   create_table "locations", force: :cascade do |t|
@@ -105,14 +109,6 @@ ActiveRecord::Schema.define(version: 20160314084709) do
   add_index "orders", ["to_location_id"], name: "index_orders_on_to_location_id", using: :btree
   add_index "orders", ["user_id"], name: "index_orders_on_user_id", using: :btree
 
-  create_table "todos", force: :cascade do |t|
-    t.string   "title"
-    t.boolean  "completed"
-    t.integer  "order"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "user_states", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
@@ -136,6 +132,7 @@ ActiveRecord::Schema.define(version: 20160314084709) do
   add_index "users", ["user_state_id"], name: "index_users_on_user_state_id", using: :btree
 
   add_foreign_key "car_models", "marks"
+  add_foreign_key "cars", "make_models"
   add_foreign_key "cars", "users"
   add_foreign_key "make_models", "car_makes"
   add_foreign_key "orders", "order_states"

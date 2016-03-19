@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_many :orders
+  has_one :car
   belongs_to :user_state
   validates :phone, presence: true, length: { maximum: 11 },
                     uniqueness: true

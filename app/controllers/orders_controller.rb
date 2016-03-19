@@ -1,7 +1,7 @@
+require 'geokit'
 class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :update, :destroy]
   before_action :require_user, only: [:create, :update, :show, :index]
-  # before_action :check_user, only: [:create, :show, :index]
 
   # GET /orders
   def index
@@ -12,6 +12,14 @@ class OrdersController < ApplicationController
 
   # GET /orders/1
   def show
+    # a = Geokit::Geocoders::GoogleGeocoder.geocode 'пр-д Добролюбова, 11, Москва, Россия'
+    # a = Location.within(:origin => [55.777595,37.657238])
+    # lat = 40.0397
+    # lon = -76.30144
+    # query = "#{lat},#{lon}"
+    # first_result = Geokit::Geocoders::GoogleGeocoder.search(query).first
+    # res=Geokit::Geocoders::GoogleGeocoder.reverse_geocode([55.777595,37.657238])  !!!!!
+    # @order.comment = res.full_address
     render json: @order
   end
 
@@ -68,7 +76,9 @@ class OrdersController < ApplicationController
       end
       @user = User.find(user_id)
       token = request.env['HTTP_API_TOKEN']? request.env['HTTP_API_TOKEN'] : params[:api_token]
-      @user.authenticate(token)
+      unless @user.authenticate(token)
+        render json: {message: "Authentication problem"}, status: :unprocessable_entity
+      end
     end
     
     def set_order
@@ -81,8 +91,4 @@ class OrdersController < ApplicationController
       params.require(:order).permit(:cost, :comment, :author, :score)
     end
     
-    # def check_user
-    #   token = request.env['HTTP_API_TOKEN']? request.env['HTTP_API_TOKEN'] : params[:api_token]
-    #   @user.authenticate(token)
-    # end
 end
